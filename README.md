@@ -21,13 +21,11 @@ Run tests from package.json
 * add run cmd to “scripts”
 ```  
   "scripts": {
-    "pageObjects-chromium": "npx playwright test --project=chromium-regression --headed",
-    "pageObjects-chromium-smoke": "npx playwright test --project=chromium-regression --headed --grep @smoke",
-    "pageObjects-firefox": "npx playwright test --project=firefox-regression --headed",
-    "pageObjects-all-first-chromuim-then-firefox": "npm run pageObjects-chromium && npm run pageObjects-firefox",
-    "pageObjects-all-paralel-run-chromuim-firefox": "npm run pageObjects-chromium & npm run pageObjects-firefox",
-    "pageObjects-chromium-dev": "BASE_URL=https://conduit.bondaracademy.com npx playwright test --project=chromium-regression --headed"
-  }
+    "ng": "ng",
+    "start": "ng serve",
+    "regression-chromium": "npx playwright test --project=chromium",
+    "regression-chromium-withui": "npx playwright test --project=chromium --headed"
+  },
 ```
 * Run cmd in terminal: ```npm run pageObjects-chromium```.
 
@@ -49,3 +47,39 @@ Start JS app on localhost
 Additional libs:
 * faker lib for data fakers: ```npm i @faker-js/faker --save-dev --force```
 * dotenv lib to get env values from ‘.env’ file Firstly enabled import in playwright.config.ts, then created values in .env file, then use this values in tests as process.env.BASE_URL
+
+Start with docker and dockerfile:
+* Create .Dockerfile
+* run ```docker build -t js-playwright-ui-test .```
+* go to docker inside ```docker run -it js-playwright-ui-test```
+* run ```npm run regression-chromium```, where ```regression-chromium``` project from package.json
+
+Start with docker-compose and dockerfile:
+* Create .Dockerfile
+```
+FROM mcr.microsoft.com/playwright:v1.49.1-noble
+
+RUN mkdir /app
+WORKDIR /app
+COPY . /app
+
+RUN npm install --force
+RUN npx playwright install
+
+```
+* Create docker-compose.yaml file
+```
+version: '3.8'
+
+services:
+  js-playwright-ui-test:
+    image: js-playwright-ui-test
+    build: 
+      context: .
+      dockerfile: ./Dockerfile
+    command: npm run regression-chromium
+    volumes:
+      - ./playwright-report:/app/playwright-report
+      - ./test-results:/app/test-results
+```
+* Build docker-compose file ```docker-compose up --build ```
