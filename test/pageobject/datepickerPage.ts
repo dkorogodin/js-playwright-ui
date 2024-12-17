@@ -15,7 +15,7 @@ export class DatepickerPage extends BasePageObject {
         this.datepickerWithRangeInputFld = this.page.getByPlaceholder('Range Picker')
         this.calendarMonthAndYear = this.page.locator('nb-calendar-view-mode')
         this.calendarNextMonthBtn = this.page.locator('nb-calendar-pageable-navigation [data-name="chevron-right"]')
-        this.calendarDay = this.page.locator('.day-cell.ng-star-inserted')
+        this.calendarDay = this.page.locator('.day-cell.ng-star-inserted:not([class*="bounding-month"])')
     }
 
     /**
